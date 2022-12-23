@@ -1,6 +1,6 @@
 use bevy::{
     app::App,
-    prelude::{Camera3dBundle, Commands, Query, Transform, Vec3, With},
+    prelude::{BuildChildren, Camera3dBundle, Commands, Query, Transform, Vec3, With},
     transform::TransformBundle,
     DefaultPlugins,
 };
@@ -38,9 +38,27 @@ fn setup_physics(mut commands: Commands) {
     commands
         .spawn(TransformBundle::from(Transform::from_xyz(0.0, 4.0, 0.0)))
         .insert(RigidBody::Dynamic)
-        .insert(Collider::ball(0.5))
+        .insert(Collider::ball(0.2))
         .insert(Restitution::coefficient(0.7));
-    // .insert_bundle();
+
+    // let joint = FixedJointBuilder::new().local_anchor1(Vec3::new(0.0, 0.0, -2.0));
+    // commands
+    //     .spawn(TransformBundle::from(Transform::from_xyz(0.0, 10.0, 0.0)))
+    //     .insert(RigidBody::Dynamic)
+    //     .insert(Collider::cuboid(3.0, 1.0, 1.0))
+    //     .insert(RigidBody::Dynamic)
+    //     .insert(Collider::cuboid(1.0, 3.0, 1.0));
+
+    commands
+        .spawn(RigidBody::Dynamic)
+        .with_children(|children| {
+            children
+                .spawn(Collider::cuboid(3.0, 1.0, 1.0))
+                .insert(TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)));
+            children
+                .spawn(Collider::cuboid(1.0, 1.0, 3.0))
+                .insert(TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)));
+        });
 }
 
 fn print_ball_altitude(positions: Query<&Transform, With<RigidBody>>) {
